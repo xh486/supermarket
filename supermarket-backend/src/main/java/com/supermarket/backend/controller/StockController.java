@@ -6,6 +6,7 @@ import com.supermarket.backend.entity.PurchaseRecord;
 import com.supermarket.backend.repository.CategoryRepository;
 import com.supermarket.backend.repository.ProductRepository;
 import com.supermarket.backend.repository.PurchaseRecordRepository;
+import com.supermarket.backend.service.ProductCacheService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +27,9 @@ public class StockController {
     @Autowired
     private CategoryRepository categoryRepo;
 
+    @Autowired
+    private ProductCacheService productCacheService;
+
     // 待入库记录
     @GetMapping("/pending")
     public List<PurchaseRecord> getPending() {
@@ -45,6 +49,7 @@ public class StockController {
             }
             pr.setStatus(1);
             purchaseRepo.save(pr);
+            productCacheService.evict();
         }
         res.put("success", true);
         return res;
